@@ -53,14 +53,14 @@ jobs:
         env:
           GITHUB_DATA: ${{ toJson(github) }}
           JOB_DATA: ${{ toJson(job) }}
-          PR_DATA: ${{ toJson(fromJson(steps.pr.outputs.result)) }}
-        run: 'printf "github:\n%s\njob:\n%spr_data:%s\n" "$GITHUB_DATA" "$JOB_DATA" "$PR_DATA"'
-#      - uses: codecov/codecov-action@v4
-#        if: hashFiles('codecov.json')
-#        with:
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#          job_code: ${{ github.event.workflow.name }}
-#          override_branch: ${{ github.event.workflow_run.head_branch }}
-#          override_build: ${{ github.event.workflow_run.id }}
-#          override_commit: ${{ github.event.workflow_run.head_sha }}
-#          override_pr: ${{ steps.pr.outputs.result }}
+          PR_DATA: ${{ steps.pr.outputs.result }}
+        run: 'printf "github:\n%s\njob:\n%s\npr_data:%s\n" "$GITHUB_DATA" "$JOB_DATA" "$PR_DATA"'
+      - uses: codecov/codecov-action@v4
+        if: hashFiles('codecov.json')
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          job_code: ${{ github.event.workflow.name }}
+          override_branch: ${{ github.event.workflow_run.head_branch }}
+          override_build: ${{ github.event.workflow_run.id }}
+          override_commit: ${{ github.event.workflow_run.head_sha }}
+          override_pr: ${{ steps.pr.outputs.result }}
