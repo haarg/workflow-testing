@@ -48,4 +48,5 @@ jobs:
       - name: debug
         env:
           EVENT_DATA: ${{ toJson(github.event) }}
-        run: 'echo "$EVENT_DATA"'
+          CONTEXT_DATA: ${{ toJson(github.context) }}
+        run: 'printf "event:\n%s\ncontext:\n%s\n" "$EVENT_DATA" "$CONTEXT_DATA"'
