@@ -47,6 +47,6 @@ jobs:
           path: ./cover_db/codecov.json
       - name: debug
         env:
-          EVENT_DATA: ${{ toJson(github.event) }}
-          CONTEXT_DATA: ${{ toJson(github.context) }}
-        run: 'printf "event:\n%s\ncontext:\n%s\n" "$EVENT_DATA" "$CONTEXT_DATA"'
+          GITHUB_DATA: ${{ toJson(github) }}
+          JOB_DATA: ${{ toJson(job) }}
+        run: 'printf "github:\n%s\njob:\n%s\n" "$GITHUB_DATA" "$JOB_DATA"'

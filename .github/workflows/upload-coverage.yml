@@ -51,10 +51,9 @@ jobs:
             return pullRequestNumber;
       - name: debug
         env:
-          PR_NUMBER: ${{ steps.pr.outputs.result }}
-          EVENT_DATA: ${{ toJson(github.event) }}
-          CONTEXT_DATA: ${{ toJson(github.context) }}
-        run: 'printf "pr: %s\nevent:\n%s\ncontext:\n%s\n" "$PR_NUMBER" "$EVENT_DATA" "$CONTEXT_DATA"'
+          GITHUB_DATA: ${{ toJson(github) }}
+          JOB_DATA: ${{ toJson(job) }}
+        run: 'printf "github:\n%s\njob:\n%s\n" "$GITHUB_DATA" "$JOB_DATA"'
 #      - uses: codecov/codecov-action@v4
 #        if: hashFiles('codecov.json')
 #        with:
