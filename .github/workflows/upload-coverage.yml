@@ -14,19 +14,26 @@ jobs:
     if: >
       github.event.workflow_run.conclusion == 'success'
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: codecov.json
-          id: ${{ github.event.workflow_run.id }}
-      - uses: actions/checkout@v4
-        name: Checkout codecov.yml
+      - name: Checkout codecov.yml
+        uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            codecov.yml
+            /.github/.codecov.yml
+            /.github/codecov.yml
+            /dev/.codecov.yml
+            /dev/codecov.yml
+            /.codecov.yml
+            /codecov.yml
           sparse-checkout-cone-mode: false
-      - uses: actions/github-script@v7
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - name: Download coverage report
+        uses: actions/download-artifact@v4
+        with:
+          pattern: codecov.json
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Find associated pull request
+        uses: actions/github-script@v7
         if: github.event.workflow_run.event == 'pull_request'
-        name: Find associated pull request
         id: pr
         with:
           script: |
@@ -42,19 +49,17 @@ jobs:
             const pullRequestNumber = items[0].number;
             console.info("Pull request number is", pullRequestNumber);
             return pullRequestNumber;
-      - name:
+      - name: debug
         env:
-          PR_NUMBER: ${{ steps.pr.outputs.result }}
-          EVENT_DATA: ${{ toJson(github.event) }}
-        run: 'printf "pr: %s\nevent:\n%s\n" "$PR_NUMBER" "$EVENT_DATA"'
+          GITHUB_DATA: ${{ toJson(github) }}
+          JOB_DATA: ${{ toJson(job) }}
+        run: 'printf "github:\n%s\njob:\n%s\n" "$GITHUB_DATA" "$JOB_DATA"'
 #      - uses: codecov/codecov-action@v4
 #        if: hashFiles('codecov.json')
 #        with:
 #          token: ${{ secrets.CODECOV_TOKEN }}
-#          commit_parent: ${{  }}
 #          job_code: ${{ github.event.workflow.name }}
-#          override_branch: ${{ }}
+#          override_branch: ${{ github.event.workflow_run.head_branch }}
 #          override_build: ${{ github.event.workflow_run.id }}
 #          override_commit: ${{ github.event.workflow_run.head_sha }}
 #          override_pr: ${{ steps.pr.outputs.result }}
-# head_sha
