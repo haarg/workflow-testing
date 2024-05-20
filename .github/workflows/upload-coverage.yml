@@ -31,7 +31,7 @@ jobs:
         with:
           script: |
             const response = await github.rest.search.issuesAndPullRequests({
-              q: 'repo:${{ github.repository }} is:pr sha:${{ github.event.workflow_run.head_sha }}',
+              q: `repo:${context.repo.owner}/${context.repo.repo} is:pr sha:${context.payload.workflow_run.head_sha}`,
               per_page: 1,
             });
             const items = response.data.items;
@@ -39,14 +39,14 @@ jobs:
               console.error('No PRs found');
               return;
             }
-            const pullRequest = items[0];
-            console.info("Pull request number is", pullRequest.number);
-            return pullRequest;
+            const pullRequestNumber = items[0].number;
+            console.info("Pull request number is", pullRequestNumber);
+            return pullRequestNumber;
       - name:
         env:
-          PR_DATA: ${{ steps.pr.outputs.result }}
+          PR_NUMBER: ${{ steps.pr.outputs.result }}
           EVENT_DATA: ${{ toJson(github.event) }}
-        run: 'printf "pr:\n%s\nevent:\n%s\n" "$PR_DATA" "$EVENT_DATA"'
+        run: 'printf "pr: %s\nevent:\n%s\n" "$PR_NUMBER" "$EVENT_DATA"'
 #      - uses: codecov/codecov-action@v4
 #        if: hashFiles('codecov.json')
 #        with:
@@ -58,6 +58,6 @@ jobs:
 #          job_code: ${{ github.event.workflow.name }}
 #          override_branch: ${{ }}
 #          override_build: ${{ github.event.workflow_run.id }}
-#          override_commit: ${{ }}
-#          override_pr: ${{ }}
-
+#          override_commit: ${{ github.event.workflow_run.head_sha }}
+#          override_pr: ${{ steps.pr.outputs.result }}
+# head_sha
