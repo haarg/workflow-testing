@@ -14,18 +14,18 @@ jobs:
     if: >
       github.event.workflow_run.conclusion == 'success'
     steps:
-#      - uses: actions/download-artifact@v4
-#        with:
-#          pattern: codecov.json
-#          id: ${{ github.event.workflow_run.id }}
-#      - uses: actions/checkout@v4
-#        name: Checkout codecov.yml
-#        with:
-#          path: repo
-#          sparse-checkout: |
-#            codecov.yml
-#          sparse-checkout-cone-mode: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: codecov.json
+          id: ${{ github.event.workflow_run.id }}
+      - uses: actions/checkout@v4
+        name: Checkout codecov.yml
+        with:
+          sparse-checkout: |
+            codecov.yml
+          sparse-checkout-cone-mode: false
       - uses: actions/github-script@v7
+        if: github.event.workflow_run.event == 'pull_request'
         name: Find associated pull request
         id: pr
         with:
@@ -50,9 +50,6 @@ jobs:
 #      - uses: codecov/codecov-action@v4
 #        if: hashFiles('codecov.json')
 #        with:
-#          codecov_yml_path: repo/codecov.yml
-#          disable_search: true
-#          file: codecov.json
 #          token: ${{ secrets.CODECOV_TOKEN }}
 #          commit_parent: ${{  }}
 #          job_code: ${{ github.event.workflow.name }}
