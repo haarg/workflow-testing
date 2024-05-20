@@ -53,8 +53,7 @@ jobs:
         env:
           GITHUB_DATA: ${{ toJson(github) }}
           JOB_DATA: ${{ toJson(job) }}
-          PR_DATA: ${{ steps.pr.outputs.result }}
-        run: 'printf "github:\n%s\njob:\n%s\npr_data:%s\n" "$GITHUB_DATA" "$JOB_DATA" "$PR_DATA"'
+        run: 'printf "github:\n%s\njob:\n%s\n" "$GITHUB_DATA" "$JOB_DATA"'
       - uses: codecov/codecov-action@v4
         if: hashFiles('codecov.json')
         with:
