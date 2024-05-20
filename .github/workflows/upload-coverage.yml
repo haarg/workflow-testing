@@ -34,15 +34,15 @@ jobs:
             const response = await github.rest.search.issuesAndPullRequests({
               q: 'repo:${{ github.repository }} is:pr sha:${{ github.event.workflow_run.head_sha }}',
               per_page: 1,
-            })
-            const items = response.data.items
+            });
+            const items = response.data.items;
             if (items.length < 1) {
-              console.error('No PRs found')
-              return
+              console.error('No PRs found');
+              return;
             }
-            const pullRequest = items[0]
-            console.info("Pull request number is", pullRequest.number)
-            return pullRequest
+            const pullRequest = items[0];
+            console.info("Pull request number is", pullRequest.number);
+            return pullRequest;
       - name:
         env:
           PR_DATA: ${{ steps.id.outputs.result }}
