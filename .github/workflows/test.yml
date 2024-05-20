@@ -1,0 +1,46 @@
+name: Test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    container:
+      image: perl:5.36
+      env:
+        DEVEL_COVER_OPTIONS: '-ignore,^local/'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install CPAN deps
+        uses: perl-actions/install-with-cpm@v1
+        with:
+          cpanfile: 'cpanfile'
+          sudo: false
+          global: false
+      - name: Install Codecovbash
+        if: matrix.resolver == 'snapshot'
+        uses: perl-actions/install-with-cpm@v1
+        with:
+          install: |
+            Devel::Cover
+            Devel::Cover::Report::Codecovbash
+          global: false
+          sudo: false
+      - run: >
+          echo "PATH=$GITHUB_WORKSPACE/local/bin:$PATH" >> "$GITHUB_PATH"
+          echo "PERL5LIB=$GITHUB_WORKSPACE/local/lib/perl5:$PERL5LIB" >> "$GITHUB_ENV"
+      - name: Enable Code Coverage
+        id: coverage
+        run: >
+          echo "switches=-MDevel::Cover=+ignore,^t/" >> "$GITHUB_OUTPUT"
+      - name: Run tests
+        run: prove -lr --jobs 2 t
+        env:
+          HARNESS_PERL_SWITCHES: ${{ steps.coverage.outputs.switches }}
+      - name: Generate Codecov report
+        run: cover -report codecovbash
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codecov.json
+          path: ./cover_db/codecov.json
