@@ -46,14 +46,15 @@ jobs:
               console.error('No PRs found');
               return;
             }
-            const pullRequestNumber = items[0].number;
-            console.info("Pull request number is", pullRequestNumber);
-            return pullRequestNumber;
+            const pullRequest = items[0];
+            console.info("Pull request number is", pullRequest.number);
+            return pullRequest;
       - name: debug
         env:
           GITHUB_DATA: ${{ toJson(github) }}
           JOB_DATA: ${{ toJson(job) }}
-        run: 'printf "github:\n%s\njob:\n%s\n" "$GITHUB_DATA" "$JOB_DATA"'
+          PR_DATA: ${{ toJson(fromJson(steps.pr.outputs.result)) }}
+        run: 'printf "github:\n%s\njob:\n%spr_data:%s\n" "$GITHUB_DATA" "$JOB_DATA" "$PR_DATA"'
 #      - uses: codecov/codecov-action@v4
 #        if: hashFiles('codecov.json')
 #        with:
