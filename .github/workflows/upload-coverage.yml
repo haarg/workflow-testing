@@ -47,8 +47,8 @@ jobs:
               console.error('No PRs found');
               return;
             }
-            const pullRequest = items[0];
-            console.info("Pull request number is", pullRequest.number);
+            const pullRequest = items[0].number;
+            console.info("Pull request number is", pullRequest);
             return pullRequest;
       - name: debug
         env:
