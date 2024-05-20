@@ -44,7 +44,7 @@ jobs:
             return pullRequest;
       - name:
         env:
-          PR_DATA: ${{ steps.id.outputs.result }}
+          PR_DATA: ${{ steps.pr.outputs.result }}
           EVENT_DATA: ${{ toJson(github.event) }}
         run: 'printf "pr:\n%s\nevent:\n%s\n" "$PR_DATA" "$EVENT_DATA"'
 #      - uses: codecov/codecov-action@v4
