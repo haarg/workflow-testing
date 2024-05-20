@@ -45,3 +45,7 @@ jobs:
         with:
           name: codecov.json
           path: ./cover_db/codecov.json
+      - name: debug
+        env:
+          EVENT_DATA: ${{ toJson(github.event) }}
+        run: 'echo "$EVENT_DATA"'
